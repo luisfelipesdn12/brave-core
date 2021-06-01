@@ -106,8 +106,10 @@ IN_PROC_BROWSER_TEST_F(BraveShieldsWebContentsObserverBrowserTest,
   EXPECT_EQ(CONTENT_SETTING_ALLOW, block_javascript_setting);
 
   // Load a simple HTML that attempts to load some JavaScript without blocking.
+#if !defined(OS_ANDROID)
   EXPECT_TRUE(ui_test_utils::NavigateToURL(
       browser(), embedded_test_server()->GetURL("a.com", "/load_js.html")));
+#endif
   EXPECT_TRUE(WaitForLoadStop(GetWebContents()));
   EXPECT_EQ(brave_shields_web_contents_observer()->block_javascript_count(), 0);
 
