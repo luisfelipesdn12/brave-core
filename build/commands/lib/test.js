@@ -1,5 +1,6 @@
 const path = require('path')
 
+const build = require('../lib/build')
 const config = require('../lib/config')
 const util = require('../lib/util')
 const assert = require('assert')
@@ -21,11 +22,7 @@ const getTestsToRun = (config, suite) => {
 }
 
 const test = (passthroughArgs, suite, buildConfig = config.defaultBuildConfig, options) => {
-  if (config.targetOS !== 'android')
-    config.buildConfig = buildConfig
-  else
-    config.buildConfig = 'Debug'
-
+  config.buildConfig = buildConfig
   config.update(options)
 
   let braveArgs = [

@@ -8,7 +8,9 @@
 #include "brave/browser/brave_shields/brave_shields_web_contents_observer.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/test/base/chrome_test_utils.h"
+#include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/tabs/tab_strip_model.h"
+#include "chrome/test/base/in_process_browser_test.h"
 #include "chrome/test/base/ui_test_utils.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -18,12 +20,6 @@
 #include "content/public/test/browser_test_utils.h"
 #include "net/dns/mock_host_resolver.h"
 #include "url/gurl.h"
-
-#if defined(OS_ANDROID)
-#include "chrome/test/base/android/android_browser_test.h"
-#else
-#include "chrome/test/base/in_process_browser_test.h"
-#endif
 
 namespace brave_shields {
 
@@ -52,12 +48,12 @@ class TestBraveShieldsWebContentsObserver
 
 }  // namespace
 
-class BraveShieldsWebContentsObserverBrowserTest : public PlatformBrowserTest {
+class BraveShieldsWebContentsObserverBrowserTest : public InProcessBrowserTest {
  public:
   BraveShieldsWebContentsObserverBrowserTest() {}
 
   void SetUpOnMainThread() override {
-    PlatformBrowserTest::SetUpOnMainThread();
+    InProcessBrowserTest::SetUpOnMainThread();
     host_resolver()->AddRule("*", "127.0.0.1");
 
     brave::RegisterPathProvider();
@@ -106,10 +102,8 @@ IN_PROC_BROWSER_TEST_F(BraveShieldsWebContentsObserverBrowserTest,
   EXPECT_EQ(CONTENT_SETTING_ALLOW, block_javascript_setting);
 
   // Load a simple HTML that attempts to load some JavaScript without blocking.
-#if !defined(OS_ANDROID)
   EXPECT_TRUE(ui_test_utils::NavigateToURL(
       browser(), embedded_test_server()->GetURL("a.com", "/load_js.html")));
-#endif
   EXPECT_TRUE(WaitForLoadStop(GetWebContents()));
   EXPECT_EQ(brave_shields_web_contents_observer()->block_javascript_count(), 0);
 
