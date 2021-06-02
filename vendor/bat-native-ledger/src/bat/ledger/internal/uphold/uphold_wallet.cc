@@ -8,7 +8,7 @@
 #include "base/json/json_reader.h"
 #include "bat/ledger/global_constants.h"
 #include "bat/ledger/internal/common/random_util.h"
-#include "bat/ledger/internal/endpoint/wallet/delete_wallet_uphold/delete_wallet_uphold.h"
+#include "bat/ledger/internal/endpoint/promotion/delete_claim_uphold/delete_claim_uphold.h"
 #include "bat/ledger/internal/ledger_impl.h"
 #include "bat/ledger/internal/logging/event_log_keys.h"
 #include "bat/ledger/internal/uphold/uphold_util.h"
@@ -23,8 +23,9 @@ namespace uphold {
 
 UpholdWallet::UpholdWallet(LedgerImpl* ledger) :
     ledger_(ledger),
-    delete_wallet_uphold_(
-        std::make_unique<ledger::endpoint::wallet::DeleteWalletUphold>(ledger)) {
+    delete_claim_(
+        std::make_unique<ledger::endpoint::promotion::DeleteClaimUphold>(
+            ledger)) {
 }
 
 UpholdWallet::~UpholdWallet() = default;
@@ -196,7 +197,7 @@ type::WalletStatus UpholdWallet::GetNewStatus(
 }
 
 void UpholdWallet::Disconnect(ledger::ResultCallback callback) {
-  delete_wallet_uphold_->Request(callback);
+  delete_claim_->Request(callback);
 }
 
 }  // namespace uphold

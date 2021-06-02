@@ -3,11 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <memory>
 #include <utility>
 
 #include "bat/ledger/global_constants.h"
 #include "bat/ledger/internal/common/random_util.h"
-#include "bat/ledger/internal/endpoint/wallet/delete_wallet_gemini/delete_wallet_gemini.h"
+#include "bat/ledger/internal/endpoint/promotion/delete_claim_gemini/delete_claim_gemini.h"
 #include "bat/ledger/internal/gemini/gemini_util.h"
 #include "bat/ledger/internal/gemini/gemini_wallet.h"
 #include "bat/ledger/internal/ledger_impl.h"
@@ -20,10 +21,11 @@ using std::placeholders::_3;
 namespace ledger {
 namespace gemini {
 
-GeminiWallet::GeminiWallet(LedgerImpl* ledger) :
-    ledger_(ledger),
-    delete_wallet_gemini_(
-        std::make_unique<ledger::endpoint::wallet::DeleteWalletGemini>(ledger)) {}
+GeminiWallet::GeminiWallet(LedgerImpl* ledger)
+    : ledger_(ledger),
+      delete_claim_(
+          std::make_unique<ledger::endpoint::promotion::DeleteClaimGemini>(
+              ledger)) {}
 
 GeminiWallet::~GeminiWallet() = default;
 
@@ -65,7 +67,7 @@ void GeminiWallet::Generate(ledger::ResultCallback callback) {
 }
 
 void GeminiWallet::Disconnect(ledger::ResultCallback callback) {
-  delete_wallet_gemini_->Request(callback);
+  delete_claim_->Request(callback);
 }
 
 }  // namespace gemini

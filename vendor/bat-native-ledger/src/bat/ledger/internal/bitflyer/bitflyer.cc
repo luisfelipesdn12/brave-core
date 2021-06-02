@@ -155,7 +155,8 @@ void Bitflyer::GenerateWallet(ledger::ResultCallback callback) {
   wallet_->Generate(callback);
 }
 
-void Bitflyer::DisconnectWallet(ledger::ResultCallback callback, const bool manual) {
+void Bitflyer::DisconnectWallet(ledger::ResultCallback callback,
+                                const bool manual) {
   auto wallet = GetWallet();
   if (!wallet) {
     return;

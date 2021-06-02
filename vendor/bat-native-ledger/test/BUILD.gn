@@ -68,7 +68,13 @@ source_set("bat_native_ledger_tests") {
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/payment/post_votes/post_votes_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/private_cdn/get_publisher/get_publisher_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/private_cdn/private_cdn_util_unittest.cc",
+<<<<<<< HEAD
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/delete_claim/delete_claim_unittest.cc",
+=======
+    "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/delete_claim_bitflyer/delete_claim_bitflyer_unittest.cc",
+    "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/delete_claim_gemini/delete_claim_gemini_unittest.cc",
+    "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/delete_claim_uphold/delete_claim_uphold_unittest.cc",
+>>>>>>> e618e80cc0... fix delete claim
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/get_available/get_available_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/get_captcha/get_captcha_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/promotion/get_drain/get_drain_unittest.cc",
@@ -103,9 +109,6 @@ source_set("bat_native_ledger_tests") {
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/uphold/post_transaction/post_transaction_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/uphold/post_transaction_commit/post_transaction_commit_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/uphold/uphold_utils_unittest.cc",
-    "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/wallet/delete_wallet_bitflyer/delete_wallet_bitflyer_unittest.cc",
-    "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/wallet/delete_wallet_gemini/delete_wallet_gemini_unittest.cc",
-    "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/endpoint/wallet/delete_wallet_uphold/delete_wallet_uphold_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/gemini/gemini_util_unittest.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/ledger_client_mock.cc",
     "//brave/vendor/bat-native-ledger/src/bat/ledger/internal/ledger_client_mock.h",

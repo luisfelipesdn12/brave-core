@@ -3,13 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <memory>
 #include <utility>
 
 #include "bat/ledger/global_constants.h"
 #include "bat/ledger/internal/bitflyer/bitflyer_util.h"
 #include "bat/ledger/internal/bitflyer/bitflyer_wallet.h"
 #include "bat/ledger/internal/common/random_util.h"
-#include "bat/ledger/internal/endpoint/wallet/delete_wallet_bitflyer/delete_wallet_bitflyer.h"
+#include "bat/ledger/internal/endpoint/promotion/delete_claim_bitflyer/delete_claim_bitflyer.h"
 #include "bat/ledger/internal/ledger_impl.h"
 #include "bat/ledger/internal/logging/event_log_keys.h"
 
@@ -22,8 +23,9 @@ namespace bitflyer {
 
 BitflyerWallet::BitflyerWallet(LedgerImpl* ledger) :
     ledger_(ledger),
-    delete_wallet_(
-        std::make_unique<ledger::endpoint::wallet::DeleteWalletBitflyer>(ledger)) {
+    delete_claim_(
+        std::make_unique<ledger::endpoint::promotion::DeleteClaimBitflyer>(
+            ledger)) {
 }
 
 BitflyerWallet::~BitflyerWallet() = default;
@@ -79,7 +81,7 @@ void BitflyerWallet::Generate(ledger::ResultCallback callback) {
 }
 
 void BitflyerWallet::Disconnect(ledger::ResultCallback callback) {
-  delete_wallet_->Request(callback);
+  delete_claim_->Request(callback);
 }
 
 }  // namespace bitflyer

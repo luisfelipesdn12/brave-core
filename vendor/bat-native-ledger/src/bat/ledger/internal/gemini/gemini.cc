@@ -155,7 +155,8 @@ void Gemini::GenerateWallet(ledger::ResultCallback callback) {
   wallet_->Generate(callback);
 }
 
-void Gemini::DisconnectWallet(ledger::ResultCallback callback, const bool manual) {
+void Gemini::DisconnectWallet(ledger::ResultCallback callback,
+                              const bool manual) {
   auto wallet = GetWallet();
   if (!wallet) {
     return;

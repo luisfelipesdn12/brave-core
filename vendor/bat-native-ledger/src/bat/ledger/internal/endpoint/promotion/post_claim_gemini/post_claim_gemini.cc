@@ -103,13 +103,6 @@ void PostClaimGemini::Request(const std::string& linking_info,
   auto headers = util::BuildSignHeaders(sign_url, payload, wallet->payment_id,
                                         wallet->recovery_seed);
 
-  const auto delete_url =
-      base::StringPrintf("delete %s", GetPath(wallet->payment_id).c_str());
-  auto delete_headers = util::BuildSignHeaders(delete_url, "", wallet->payment_id,
-                                        wallet->recovery_seed);
-
-  BLOG(0, delete_headers.front());
-
   auto request = type::UrlRequest::New();
   request->url = GetUrl();
   request->content = payload;

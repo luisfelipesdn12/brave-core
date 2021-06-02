@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <memory>
 #include <utility>
 
 #include "base/strings/stringprintf.h"
@@ -45,8 +46,9 @@ void BitflyerTransfer::OnCreateTransaction(
     const std::string& id,
     client::TransactionCallback callback) {
   if (result == type::Result::EXPIRED_TOKEN) {
-    ledger_->bitflyer()->DisconnectWallet([callback](const type::Result result) {
-      callback(type::Result::EXPIRED_TOKEN, "");
+    ledger_->bitflyer()->DisconnectWallet(
+      [callback](const type::Result result) {
+        callback(type::Result::EXPIRED_TOKEN, "");
     }, false);
     return;
   }

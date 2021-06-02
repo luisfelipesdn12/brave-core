@@ -6,6 +6,7 @@
 #ifndef BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_GEMINI_GEMINI_WALLET_H_
 #define BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_GEMINI_GEMINI_WALLET_H_
 
+#include <memory>
 #include <string>
 
 #include "bat/ledger/ledger.h"
@@ -13,10 +14,10 @@
 namespace ledger {
 
 namespace endpoint {
-namespace wallet {	
-class DeleteWalletGemini;
-} // namespace endpoint
-} // namespace wallet
+namespace promotion {
+class DeleteClaimGemini;
+}  // namespace promotion
+}  // namespace endpoint
 
 class LedgerImpl;
 
@@ -33,7 +34,7 @@ class GeminiWallet {
 
  private:
   LedgerImpl* ledger_;  // NOT OWNED
-  std::unique_ptr<endpoint::wallet::DeleteWalletGemini> delete_wallet_gemini_;
+  std::unique_ptr<endpoint::promotion::DeleteClaimGemini> delete_claim_;
 };
 
 }  // namespace gemini

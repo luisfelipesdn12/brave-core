@@ -6,6 +6,7 @@
 #ifndef BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_BITFLYER_BITFLYER_WALLET_H_
 #define BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_BITFLYER_BITFLYER_WALLET_H_
 
+#include <memory>
 #include <string>
 
 #include "bat/ledger/ledger.h"
@@ -13,10 +14,10 @@
 namespace ledger {
 
 namespace endpoint {
-namespace wallet {
-class DeleteWalletBitflyer;
-} // namespace wallet
-} // namespace endpoint
+namespace promotion {
+class DeleteClaimBitflyer;
+}  // namespace promotion
+}  // namespace endpoint
 
 class LedgerImpl;
 
@@ -33,7 +34,7 @@ class BitflyerWallet {
 
  private:
   LedgerImpl* ledger_;  // NOT OWNED
-  std::unique_ptr<endpoint::wallet::DeleteWalletBitflyer> delete_wallet_;
+  std::unique_ptr<endpoint::promotion::DeleteClaimBitflyer> delete_claim_;
 };
 
 }  // namespace bitflyer

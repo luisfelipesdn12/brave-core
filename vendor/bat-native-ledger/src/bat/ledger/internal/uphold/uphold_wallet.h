@@ -14,10 +14,10 @@
 namespace ledger {
 
 namespace endpoint {
-namespace wallet {
-class DeleteWalletUphold;
-} // namespace wallet
-} // namespace endpoint
+namespace promotion {
+class DeleteClaimUphold;
+}  // namespace promotion
+}  // namespace endpoint
 
 class LedgerImpl;
 
@@ -48,7 +48,7 @@ class UpholdWallet {
       const User& user);
 
   LedgerImpl* ledger_;  // NOT OWNED
-  std::unique_ptr<endpoint::wallet::DeleteWalletUphold> delete_wallet_uphold_;
+  std::unique_ptr<endpoint::promotion::DeleteClaimUphold> delete_claim_;
 };
 
 }  // namespace uphold

@@ -64,9 +64,14 @@ std::string GetAuthorizeUrl(const std::string& state) {
       "payments:create,"
       "balances:read,"
       "payments:read,"
+      "history:read,"
+      "clearing:create,"
+      "clearing:read,"
+      "crypto:send,"
       "orders:read,"
       "addresses:create,"
-      "account:read"
+      "account:read,"
+      "banks:read"
       "&redirect_uri=rewards://gemini/authorization"
       "&state=%s"
       "&response_type=code",
@@ -248,7 +253,8 @@ type::ExternalWalletPtr GenerateLinks(type::ExternalWalletPtr wallet) {
   return wallet;
 }
 
-type::ExternalWalletPtr ResetWallet(type::ExternalWalletPtr wallet, const bool manual) {
+type::ExternalWalletPtr ResetWallet(type::ExternalWalletPtr wallet,
+                                    const bool manual) {
   if (!wallet) {
     return nullptr;
   }

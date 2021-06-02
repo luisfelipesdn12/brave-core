@@ -310,7 +310,8 @@ std::string GenerateVerifyLink(type::ExternalWalletPtr wallet) {
   return url;
 }
 
-type::ExternalWalletPtr ResetWallet(type::ExternalWalletPtr wallet, const bool manual) {
+type::ExternalWalletPtr ResetWallet(type::ExternalWalletPtr wallet,
+                                    const bool manual) {
   if (!wallet) {
     return nullptr;
   }
