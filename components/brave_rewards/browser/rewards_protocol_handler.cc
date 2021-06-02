@@ -63,6 +63,7 @@ void LoadRewardsURL(
   const char* kAllowedDomains[] = {
       "bitflyer.com",                 // bitFlyer production
       bitflyer_staging_host.c_str(),  // bitFlyer staging
+      "gemini.com",                   // Gemini staging/production
       "uphold.com",                   // Uphold staging/production
   };
   bool allowed_domain = false;

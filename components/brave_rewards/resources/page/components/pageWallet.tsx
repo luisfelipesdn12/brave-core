@@ -840,7 +840,6 @@ class PageWallet extends React.Component<Props, State> {
           goToExternalWallet={this.goToExternalWallet}
           greetings={this.getGreetings()}
           onlyAnonWallet={onlyAnonWallet}
-          showLoginMessage={this.showLoginMessage()}
         >
           {
             emptyWallet && pendingTotal === 0

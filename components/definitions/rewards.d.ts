@@ -113,7 +113,8 @@ declare namespace Rewards {
     BRAVE_TOKENS = 1,
     UPHOLD = 2,
     BRAVE_USER_FUNDS = 3,
-    BITFLYER = 4
+    BITFLYER = 4,
+    GEMINI = 5
   }
 
   export interface TransactionReport {
@@ -176,7 +177,8 @@ declare namespace Rewards {
     NOT_VERIFIED = 0,
     CONNECTED = 1,
     UPHOLD_VERIFIED = 2,
-    BITFLYER_VERIFIED = 3
+    BITFLYER_VERIFIED = 3,
+    GEMINI_VERIFIED = 4
   }
 
   export interface Publisher {
@@ -262,7 +264,7 @@ declare namespace Rewards {
     wallets: Record<string, number>
   }
 
-  export type WalletType = 'anonymous' | 'uphold' | 'bitflyer'
+  export type WalletType = 'anonymous' | 'uphold' | 'bitflyer' | 'gemini'
 
   export enum WalletStatus {
     NOT_CONNECTED = 0,

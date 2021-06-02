@@ -6,7 +6,7 @@ import * as React from 'react'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { WalletAddIcon, BatColorIcon } from 'brave-ui/components/icons'
-import { WalletWrapper, WalletSummary, WalletSummarySlider, WalletPanel } from '../../../ui/components'
+import { ConnectWallet, SelectWallet, WalletWrapper, WalletSummary, WalletSummarySlider, WalletPanel } from '../../../ui/components'
 import { Provider } from '../../../ui/components/profile'
 import { NotificationType, WalletState } from '../../../ui/components/walletWrapper'
 import { RewardsNotificationType } from '../constants/rewards_panel_types'
@@ -28,6 +28,7 @@ interface Props extends RewardsExtension.ComponentProps {
 }
 
 interface State {
+  stage: string
   showSummary: boolean
   showRewardsTour: boolean
   firstTimeSetup: boolean
@@ -43,6 +44,7 @@ export class Panel extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.state = {
+      stage: "wallet",
       showSummary: true,
       showRewardsTour: false,
       firstTimeSetup: false,
@@ -299,7 +301,7 @@ export class Panel extends React.Component<Props, State> {
       return
     }
 
-    utils.handleExternalWalletLink(balance, externalWallet)
+    utils.handleExternalWalletLink(this.props.actions, balance, externalWallet)
   }
 
   showTipSiteDetail = (entryPoint: RewardsExtension.TipDialogEntryPoint) => {
@@ -680,14 +682,12 @@ export class Panel extends React.Component<Props, State> {
     return utils.getPromotion(currentPromotion[0], onlyAnonWallet)
   }
 
-  showLoginMessage = () => {
+  showUpholdWarning = () => {
     const { balance, externalWallet } = this.props.rewardsPanelData
     const walletStatus = utils.getWalletStatus(externalWallet)
-    const walletType = externalWallet ? externalWallet.type : ''
 
     return (
       (!walletStatus || walletStatus === 'unverified') &&
-      walletType === 'uphold' &&
       balance &&
       balance.total < upholdMinimumBalance
     )
@@ -732,7 +732,7 @@ export class Panel extends React.Component<Props, State> {
       }
 
       const onVerifyClick = () => {
-        utils.handleExternalWalletLink(balance, externalWallet)
+        utils.handleExternalWalletLink(this.props.actions, balance, externalWallet)
       }
 
       return (
@@ -787,6 +787,18 @@ export class Panel extends React.Component<Props, State> {
     )
   }
 
+  verifyClicked = () => {
+    this.setState({
+      stage: "connect-wallet"
+    })
+  }
+
+  selectWallet = () => {
+    this.setState({
+      stage: "select-wallet"
+    })
+  }
+
   render () {
     const { pendingContributionTotal, enabledAC, externalWallet, balance, parameters } = this.props.rewardsPanelData
     const publisher: RewardsExtension.Publisher | undefined = this.getPublisher()
@@ -815,79 +827,100 @@ export class Panel extends React.Component<Props, State> {
 
     let walletStatus: WalletState | undefined = undefined
     let onVerifyClick = undefined
+    let onContinue = this.selectWallet
+    let onWalletSelected = undefined
+
     if (!this.props.onlyAnonWallet) {
       walletStatus = utils.getWalletStatus(externalWallet)
-      onVerifyClick = utils.handleExternalWalletLink.bind(this, balance, externalWallet)
+      onVerifyClick = this.verifyClicked
+      onWalletSelected = utils.handleExternalWalletLink.bind(this, this.props.actions, balance, null)
     }
 
     return (
-      <WalletWrapper
-        id={'rewards-panel'}
-        compact={true}
-        contentPadding={false}
-        gradientTop={this.gradientColor}
-        balance={total.toFixed(3)}
-        converted={utils.formatConverted(converted)}
-        actions={this.getActions()}
-        showCopy={false}
-        showSecActions={false}
-        grant={currentPromotion}
-        onGrantHide={this.onPromotionHide}
-        onNotificationClick={notificationClick}
-        onSolution={this.onSolution}
-        onFinish={this.onFinish}
-        walletType={externalWallet ? externalWallet.type : undefined}
-        walletState={walletStatus}
-        walletProvider={utils.getWalletProviderName(externalWallet)}
-        onVerifyClick={onVerifyClick}
-        onDisconnectClick={this.onDisconnectClick}
-        goToExternalWallet={this.goToExternalWallet}
-        greetings={utils.getGreetings(externalWallet)}
-        onlyAnonWallet={this.props.onlyAnonWallet}
-        showLoginMessage={this.showLoginMessage()}
-        {...notification}
-      >
-        <WalletSummarySlider
-          id={'panel-slider'}
-          onToggle={this.onSliderToggle}
+      <>
+      {
+        this.state.stage == "connect-wallet" ?
+        <ConnectWallet
+          isMobile={false}
+          onContinue={onContinue}>
+        </ConnectWallet>
+        :
+        this.state.stage == "select-wallet" ?
+        <SelectWallet
+          isMobile={false}
+          showUpholdWarning={this.showUpholdWarning()}
+          onWalletSelected={onWalletSelected}
         >
-          {
-            publisher && publisher.publisherKey
-            ? <WalletPanel
-              id={'wallet-panel'}
-              platform={publisher.provider as Provider}
-              publisherName={publisher.name}
-              publisherImg={faviconUrl}
-              monthlyAmount={defaultContribution}
-              isVerified={checkmark}
-              tipsEnabled={true}
-              includeInAuto={!publisher.excluded}
-              attentionScore={(publisher.percentage || 0).toString()}
-              onToggleTips={this.doNothing}
-              donationAction={this.showTipSiteDetail.bind(this, 'one-time')}
-              onIncludeInAuto={this.switchAutoContribute}
-              showUnVerified={this.shouldShowConnectedMessage()}
-              acEnabled={enabledAC}
-              moreLink={'https://brave.com/faq/#unclaimed-funds'}
-              onRefreshPublisher={this.refreshPublisher}
-              refreshingPublisher={this.state.refreshingPublisher}
-              publisherRefreshed={this.state.publisherRefreshed}
-              setMonthlyAction={this.showTipSiteDetail.bind(this, 'set-monthly')}
-              cancelMonthlyAction={this.showTipSiteDetail.bind(this, 'clear-monthly')}
-              onlyAnonWallet={onlyAnonWallet}
+        </SelectWallet>
+        :
+        <WalletWrapper
+          id={'rewards-panel'}
+          compact={true}
+          contentPadding={false}
+          gradientTop={this.gradientColor}
+          balance={total.toFixed(3)}
+          converted={utils.formatConverted(converted)}
+          actions={this.getActions()}
+          showCopy={false}
+          showSecActions={false}
+          grant={currentPromotion}
+          onGrantHide={this.onPromotionHide}
+          onNotificationClick={notificationClick}
+          onSolution={this.onSolution}
+          onFinish={this.onFinish}
+          walletType={externalWallet ? externalWallet.type : undefined}
+          walletState={walletStatus}
+          walletProvider={utils.getWalletProviderName(externalWallet)}
+          onVerifyClick={onVerifyClick}
+          onDisconnectClick={this.onDisconnectClick}
+          goToExternalWallet={this.goToExternalWallet}
+          greetings={utils.getGreetings(externalWallet)}
+          onlyAnonWallet={this.props.onlyAnonWallet}
+          {...notification}
+        >
+          <WalletSummarySlider
+            id={'panel-slider'}
+            onToggle={this.onSliderToggle}
+          >
+            {
+              publisher && publisher.publisherKey
+              ? <WalletPanel
+                id={'wallet-panel'}
+                platform={publisher.provider as Provider}
+                publisherName={publisher.name}
+                publisherImg={faviconUrl}
+                monthlyAmount={defaultContribution}
+                isVerified={checkmark}
+                tipsEnabled={true}
+                includeInAuto={!publisher.excluded}
+                attentionScore={(publisher.percentage || 0).toString()}
+                onToggleTips={this.doNothing}
+                donationAction={this.showTipSiteDetail.bind(this, 'one-time')}
+                onIncludeInAuto={this.switchAutoContribute}
+                showUnVerified={this.shouldShowConnectedMessage()}
+                acEnabled={enabledAC}
+                moreLink={'https://brave.com/faq/#unclaimed-funds'}
+                onRefreshPublisher={this.refreshPublisher}
+                refreshingPublisher={this.state.refreshingPublisher}
+                publisherRefreshed={this.state.publisherRefreshed}
+                setMonthlyAction={this.showTipSiteDetail.bind(this, 'set-monthly')}
+                cancelMonthlyAction={this.showTipSiteDetail.bind(this, 'clear-monthly')}
+                onlyAnonWallet={onlyAnonWallet}
+              />
+              : null
+            }
+            <WalletSummary
+              compact={true}
+              reservedAmount={pendingTotal}
+              onlyAnonWallet={this.props.onlyAnonWallet}
+              reservedMoreLink={'https://brave.com/faq/#unclaimed-funds'}
+              {...this.getWalletSummary()}
             />
-            : null
-          }
-          <WalletSummary
-            compact={true}
-            reservedAmount={pendingTotal}
-            onlyAnonWallet={this.props.onlyAnonWallet}
-            reservedMoreLink={'https://brave.com/faq/#unclaimed-funds'}
-            {...this.getWalletSummary()}
-          />
-        </WalletSummarySlider>
-        {this.showOnboarding()}
-      </WalletWrapper>
+          </WalletSummarySlider>
+          {this.showOnboarding()}
+        </WalletWrapper>
+      }
+      </>
     )
   }
 }

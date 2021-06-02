@@ -513,6 +513,17 @@
         ]
       },
       {
+        "name": "setSelectedWallet",
+        "type": "function",
+        "description": "Updates the wallet type selected by the user",
+        "parameters": [
+          {
+            "name": "walletType",
+            "type": "string"
+          }
+        ]
+      },
+      {
         "name": "tipSite",
         "type": "function",
         "description": "Allow the user to perform a tip to a tab's site",

@@ -3,14 +3,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVELEDGER_UPHOLD_UPHOLD_WALLET_H_
-#define BRAVELEDGER_UPHOLD_UPHOLD_WALLET_H_
+#ifndef BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_UPHOLD_UPHOLD_WALLET_H_
+#define BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_UPHOLD_UPHOLD_WALLET_H_
 
+#include <memory>
 #include <string>
 
 #include "bat/ledger/ledger.h"
 
 namespace ledger {
+
+namespace endpoint {
+namespace wallet {
+class DeleteWalletUphold;
+} // namespace wallet
+} // namespace endpoint
+
 class LedgerImpl;
 
 namespace uphold {
@@ -22,6 +30,7 @@ class UpholdWallet {
   ~UpholdWallet();
 
   void Generate(ledger::ResultCallback callback);
+  void Disconnect(ledger::ResultCallback callback);
 
  private:
   void OnGenerate(
@@ -39,8 +48,9 @@ class UpholdWallet {
       const User& user);
 
   LedgerImpl* ledger_;  // NOT OWNED
+  std::unique_ptr<endpoint::wallet::DeleteWalletUphold> delete_wallet_uphold_;
 };
 
 }  // namespace uphold
 }  // namespace ledger
-#endif  // BRAVELEDGER_UPHOLD_UPHOLD_WALLET_H_
+#endif  // BRAVE_VENDOR_BAT_NATIVE_LEDGER_SRC_BAT_LEDGER_INTERNAL_UPHOLD_UPHOLD_WALLET_H_

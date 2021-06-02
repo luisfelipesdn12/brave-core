@@ -315,6 +315,54 @@
     "message": "Oops, something is wrong. Please try again later.",
     "description": "Error title when user is having problems claiming a grant."
   },
+  "walletConnectButtonText": {
+    "message": "Continue",
+    "description": "Text on the button for the connect wallet panel"
+  },
+  "walletConnectMessage": {
+    "message": "Receive rewards directly in your wallet hosted by a custodial wallet service, so you can store and manager your funds easily.",
+    "description": "Message for the connect wallet panel"
+  },
+  "walletConnectNote": {
+    "message": "*You must verify your identity with your wallet service in order to have the rewards directly deposited from Brave.",
+    "description": "Note in the connect wallet panel"
+  },
+  "walletConnectReconnectLink": {
+    "message": "Login to reconnect",
+    "description": "Link text in the connect wallet panel, which allows users to reconnect to their wallet"
+  },
+  "walletConnectReconnectText": {
+    "message": "Already connected your wallet previously?",
+    "description": "Text in the connect wallet panel for user's who'd like to reconnect"
+  },
+  "walletConnectTitle": {
+    "message": "Connect Wallet",
+    "description": "Title for the connect wallet panel"
+  },
+  "walletSelectGemini": {
+    "message": "Gemini",
+    "description": "Select gemini wallet"
+  },
+  "walletSelectTitle": {
+    "message": "Choose a wallet service",
+    "description": "Title for the select wallet panel"
+  },
+  "walletSelectText": {
+    "message": "Choose a preferred wallet service. If you already have an account, you will be asked to log in.",
+    "description": "Header text for the select wallet panel"
+  },
+  "walletSelectUphold": {
+    "message": "Uphold",
+    "description": "Select uphold wallet"
+  },
+  "walletSelectUpholdMessage": {
+    "message": "Uphold requires a minimum balance of 25 BAT to create an account. If you connected an account previously, ",
+    "description": "Message to indicate wallet creation pre-requisite for Uphold"
+  },
+  "walletSelectUpholdMessageLink": {
+    "message": "continue to log in.",
+    "description": "Text with link to login to uphold"
+  },
   "unVerifiedCheck": {
     "message": "Refresh Status",
     "description": "Text of link that allows to check verified status of unverified publisher"

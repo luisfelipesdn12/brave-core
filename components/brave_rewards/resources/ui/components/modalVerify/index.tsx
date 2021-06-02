@@ -32,6 +32,8 @@ import {
   RewardsWalletCheck,
   RewardsCheckIcon
 } from 'brave-ui/components/icons'
+
+import { GeminiIcon } from '../../../shared/components/icons/gemini_icon'
 import { Modal } from 'brave-ui/components'
 
 export interface Props {
@@ -84,6 +86,7 @@ export default class ModalVerify extends React.PureComponent<Props, {}> {
         </span>
         <StyledFooterIcon>
           {walletType === 'uphold' ? <UpholdColorIcon /> : null}
+          {walletType === 'gemini' ? <GeminiIcon white={false} size={"10"} /> : null}
         </StyledFooterIcon>
       </StyledFooter>
     )

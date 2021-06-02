@@ -11,6 +11,13 @@
 #include "bat/ledger/ledger.h"
 
 namespace ledger {
+
+namespace endpoint {
+namespace wallet {
+class DeleteWalletBitflyer;
+} // namespace wallet
+} // namespace endpoint
+
 class LedgerImpl;
 
 namespace bitflyer {
@@ -22,9 +29,11 @@ class BitflyerWallet {
   ~BitflyerWallet();
 
   void Generate(ledger::ResultCallback callback);
+  void Disconnect(ledger::ResultCallback callback);
 
  private:
   LedgerImpl* ledger_;  // NOT OWNED
+  std::unique_ptr<endpoint::wallet::DeleteWalletBitflyer> delete_wallet_;
 };
 
 }  // namespace bitflyer

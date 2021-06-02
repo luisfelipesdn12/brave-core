@@ -53,8 +53,9 @@ void UpholdTransfer::OnCreateTransaction(
     const std::string& id,
     client::TransactionCallback callback) {
   if (result == type::Result::EXPIRED_TOKEN) {
-    callback(type::Result::EXPIRED_TOKEN, "");
-    ledger_->uphold()->DisconnectWallet();
+    ledger_->bitflyer()->DisconnectWallet([callback](const type::Result result) {
+      callback(type::Result::EXPIRED_TOKEN, "");
+    }, false);
     return;
   }
 
@@ -101,7 +102,9 @@ void UpholdTransfer::OnCommitTransaction(
     client::TransactionCallback callback) {
   if (result == type::Result::EXPIRED_TOKEN) {
     callback(type::Result::EXPIRED_TOKEN, "");
-    ledger_->uphold()->DisconnectWallet();
+    ledger_->bitflyer()->DisconnectWallet([callback](const type::Result result) {
+      callback(type::Result::EXPIRED_TOKEN, "");
+    }, false);
     return;
   }
 

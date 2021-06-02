@@ -135,8 +135,9 @@ void BitflyerAuthorization::OnAuthorize(
     ledger::ExternalWalletAuthorizationCallback callback) {
   if (result == type::Result::EXPIRED_TOKEN) {
     BLOG(0, "Expired token");
-    callback(type::Result::EXPIRED_TOKEN, {});
-    ledger_->bitflyer()->DisconnectWallet();
+    ledger_->bitflyer()->DisconnectWallet([callback](const type::Result result){
+      callback(type::Result::EXPIRED_TOKEN, {});
+    }, false);
     return;
   }
 

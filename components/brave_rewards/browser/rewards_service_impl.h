@@ -190,6 +190,8 @@ class RewardsServiceImpl : public RewardsService,
   void SetPublisherExclude(
       const std::string& publisher_key,
       bool exclude) override;
+  void SetSelectedWallet(const std::string wallet_type) override;
+
   RewardsNotificationService* GetNotificationService() const override;
   void SetBackupCompleted() override;
   void GetRewardsInternalsInfo(
@@ -792,6 +794,7 @@ class RewardsServiceImpl : public RewardsService,
   bool ledger_for_testing_ = false;
   bool resetting_rewards_ = false;
   int persist_log_level_ = 0;
+  std::string wallet_type_ = "";
 
   GetTestResponseCallback test_response_callback_;
 

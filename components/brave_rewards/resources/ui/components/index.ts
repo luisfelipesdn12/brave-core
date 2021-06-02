@@ -8,6 +8,7 @@ import Amount from './amount'
 import Box from './box'
 import BoxAlert from './boxAlert'
 import CategoryLikePicker from './categoryLikePicker'
+import ConnectWallet from './connectWallet'
 import DisabledContent from './disabledContent'
 import DisabledPanel from './disabledPanel'
 import GrantCaptcha from './grantCaptcha'
@@ -33,6 +34,7 @@ import Profile from './profile'
 import RestoreSites from './restoreSites'
 import RewardsButton from './rewardsButton'
 import SettingsPage from './settingsPage'
+import SelectWallet from './selectWallet'
 import ShowAdsHistory from './showAdsHistory'
 import SidebarPromo from './sidebarPromo'
 import Tab from './tab'
@@ -59,6 +61,7 @@ export {
   Box,
   BoxAlert,
   CategoryLikePicker,
+  ConnectWallet,
   DisabledContent,
   DisabledPanel,
   GrantCaptcha,
@@ -83,6 +86,7 @@ export {
   Profile,
   RestoreSites,
   RewardsButton,
+  SelectWallet,
   SettingsPage,
   ShowAdsHistory,
   SidebarPromo,

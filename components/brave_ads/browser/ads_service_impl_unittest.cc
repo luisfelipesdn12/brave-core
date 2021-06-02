@@ -241,6 +241,8 @@ class MockRewardsService : public RewardsService {
 
   MOCK_METHOD1(SetAdsEnabled, void(const bool is_enabled));
 
+  MOCK_METHOD1(SetSelectedWallet, void(const std::string wallet_type));
+
   MOCK_CONST_METHOD0(IsRewardsEnabled, bool());
 };
 

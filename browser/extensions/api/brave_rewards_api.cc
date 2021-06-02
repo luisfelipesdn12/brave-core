@@ -1294,5 +1294,23 @@ ExtensionFunction::ResponseAction BraveRewardsUpdatePrefsFunction::Run() {
   return RespondNow(NoArguments());
 }
 
+BraveRewardsSetSelectedWalletFunction::
+~BraveRewardsSetSelectedWalletFunction() {
+}
+
+ExtensionFunction::ResponseAction
+BraveRewardsSetSelectedWalletFunction::Run() {
+  auto params = brave_rewards::SetSelectedWallet::Params::Create(*args_);
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  RewardsService* rewards_service =
+    RewardsServiceFactory::GetForProfile(profile);
+  if (!rewards_service) {
+    return RespondNow(NoArguments());
+  }
+
+  rewards_service->SetSelectedWallet(params->wallet_type);
+  return RespondNow(NoArguments());
+}
+
 }  // namespace api
 }  // namespace extensions

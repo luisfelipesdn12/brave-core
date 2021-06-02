@@ -942,12 +942,24 @@
       <message name="IDS_BRAVE_UI_GRANT_FINISH_POINT_UGP" desc="Token text on final grant screen for UGP">Free Point Grant</message>
 
       <message name="IDS_BRAVE_UI_REWARDS_PANEL_VERIFY" desc="">verify</message>
+      <message name="IDS_BRAVE_UI_WALLET_CONNECT_BUTTON_TEXT" desc="">Continue</message>
+      <message name="IDS_BRAVE_UI_WALLET_CONNECT_MESSAGE" desc="">Receive rewards directly in your wallet hosted by a custodial wallet service, so you can store and manager your funds easily.</message>
+      <message name="IDS_BRAVE_UI_WALLET_CONNECT_RECONNECT_LINK" desc="">Login to reconnect</message>
+      <message name="IDS_BRAVE_UI_WALLET_CONNECT_RECONNECT_TEXT" desc="">Already connected your wallet previously?</message>
+      <message name="IDS_BRAVE_UI_WALLET_CONNECT_NOTE" desc="">*You must verify your identity with your wallet service in order to have the rewards directly deposited from Brave.</message>
+      <message name="IDS_BRAVE_UI_WALLET_CONNECT_TITLE" desc="">Connect Wallet</message>
       <message name="IDS_BRAVE_UI_WALLET_BUTTON_DISCONNECTED" desc="">Disconnected</message>
       <message name="IDS_BRAVE_UI_WALLET_BUTTON_UNVERIFIED" desc="">Verify Wallet</message>
       <message name="IDS_BRAVE_UI_WALLET_BUTTON_VERIFIED" desc="">Wallet Verified</message>
       <message name="IDS_BRAVE_UI_WALLET_GO_TO_PROVIDER" desc="">Go to my <ph name="PROVIDER">$1<ex>Uphold</ex></ph> account</message>
       <message name="IDS_BRAVE_UI_WALLET_GO_TO_VERIFY_PAGE" desc="CTA for completing wallet verification">Complete wallet verification</message>
       <message name="IDS_BRAVE_UI_WALLET_DISCONNECT" desc="">Disconnect from Brave Rewards</message>
+      <message name="IDS_BRAVE_UI_WALLET_SELECT_GEMINI" desc="">Gemini</message>
+      <message name="IDS_BRAVE_UI_WALLET_SELECT_TITLE" desc="">Choose a wallet service</message>
+      <message name="IDS_BRAVE_UI_WALLET_SELECT_TEXT" desc="">Choose a preferred wallet service. If you already have an account, you will be asked to log in.</message>
+      <message name="IDS_BRAVE_UI_WALLET_SELECT_UPHOLD" desc="">Uphold</message>
+      <message name="IDS_BRAVE_UI_WALLET_SELECT_UPHOLD_MESSAGE" desc="">Uphold requires a minimum balance of 25 BAT to create an account. If you connected an account previously, </message>
+      <message name="IDS_BRAVE_UI_WALLET_SELECT_UPHOLD_MESSAGE_LINK" desc="">continue to log in.</message>
       <message name="IDS_BRAVE_UI_WALLET_VERIFICATION_BUTTON" desc="">Verify wallet</message>
       <message name="IDS_BRAVE_UI_WALLET_VERIFICATION_FOOTER" desc="">Our wallet service is provided by <ph name="PROVIDER">$1<ex>Uphold</ex></ph>.</message>
       <message name="IDS_BRAVE_UI_WALLET_VERIFICATION_ID" desc="">Please have your government issued ID available.</message>
