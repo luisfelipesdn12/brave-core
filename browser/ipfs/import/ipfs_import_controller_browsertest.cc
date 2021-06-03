@@ -27,11 +27,17 @@ namespace {
 
 class FakeIpfsService : public ipfs::IpfsService {
  public:
-  FakeIpfsService(content::BrowserContext* context,
-                  ipfs::BraveIpfsClientUpdater* updater,
-                  const base::FilePath& user_dir,
-                  version_info::Channel channel)
-      : ipfs::IpfsService(context, updater, user_dir, channel) {}
+  FakeIpfsService(
+      extensions::ExtensionRegistry* registry,
+      PrefService* prefs,
+      scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory,
+      ipfs::BlobContextGetterFactoryPtr blob_context_getter_factory,
+      ipfs::BraveIpfsClientUpdater* updater,
+      const base::FilePath& user_dir,
+      version_info::Channel channel)
+      : ipfs::IpfsService(registry, prefs, url_loader_factory,
+                          std::move(blob_context_getter_factory), updater,
+                          user_dir, channel) {}
   ~FakeIpfsService() override {}
   void ImportTextToIpfs(const std::string& text,
                         const std::string& host,
@@ -118,9 +124,9 @@ IN_PROC_BROWSER_TEST_F(IpfsImportControllerBrowserTest, ImportFileToIpfs) {
   if (!helper)
     return;
   base::FilePath user_dir = base::FilePath(FILE_PATH_LITERAL("test"));
-  auto* context = active_contents()->GetBrowserContext();
   std::unique_ptr<FakeIpfsService> ipfs_service(
-      new FakeIpfsService(context, nullptr, user_dir, chrome::GetChannel()));
+      new FakeIpfsService(nullptr, nullptr, nullptr, nullptr, nullptr, user_dir,
+                          chrome::GetChannel()));
   ipfs::ImportedData data;
   data.hash = "QmYbK4SLaSvTKKAKvNZMwyzYPy4P3GqBPN6CZzbS73FxxU";
   data.filename = "google.com";
@@ -152,9 +158,9 @@ IN_PROC_BROWSER_TEST_F(IpfsImportControllerBrowserTest, ImportTextToIpfs) {
   if (!helper)
     return;
   base::FilePath user_dir = base::FilePath(FILE_PATH_LITERAL("test"));
-  auto* context = active_contents()->GetBrowserContext();
   std::unique_ptr<FakeIpfsService> ipfs_service(
-      new FakeIpfsService(context, nullptr, user_dir, chrome::GetChannel()));
+      new FakeIpfsService(nullptr, nullptr, nullptr, nullptr, nullptr, user_dir,
+                          chrome::GetChannel()));
   ipfs::ImportedData data;
   data.hash = "QmYbK4SLaSvTKKAKvNZMwyzYPy4P3GqBPN6CZzbS73FxxU";
   data.filename = "google.com";
@@ -185,9 +191,9 @@ IN_PROC_BROWSER_TEST_F(IpfsImportControllerBrowserTest, ImportLinkToIpfs) {
   if (!helper)
     return;
   base::FilePath user_dir = base::FilePath(FILE_PATH_LITERAL("test"));
-  auto* context = active_contents()->GetBrowserContext();
   std::unique_ptr<FakeIpfsService> ipfs_service(
-      new FakeIpfsService(context, nullptr, user_dir, chrome::GetChannel()));
+      new FakeIpfsService(nullptr, nullptr, nullptr, nullptr, nullptr, user_dir,
+      chrome::GetChannel()));
   ipfs::ImportedData data;
   data.hash = "QmYbK4SLaSvTKKAKvNZMwyzYPy4P3GqBPN6CZzbS73FxxU";
   data.filename = "google.com";
@@ -218,9 +224,10 @@ IN_PROC_BROWSER_TEST_F(IpfsImportControllerBrowserTest, ImportDirectoryToIpfs) {
   if (!helper)
     return;
   base::FilePath user_dir = base::FilePath(FILE_PATH_LITERAL("test"));
-  auto* context = active_contents()->GetBrowserContext();
+
   std::unique_ptr<FakeIpfsService> ipfs_service(
-      new FakeIpfsService(context, nullptr, user_dir, chrome::GetChannel()));
+      new FakeIpfsService(nullptr, nullptr, nullptr, nullptr, nullptr, user_dir,
+                          chrome::GetChannel()));
   ipfs::ImportedData data;
   data.hash = "QmYbK4SLaSvTKKAKvNZMwyzYPy4P3GqBPN6CZzbS73FxxU";
   data.filename = "google.com";
@@ -253,9 +260,9 @@ IN_PROC_BROWSER_TEST_F(IpfsImportControllerBrowserTest,
   if (!helper)
     return;
   base::FilePath user_dir = base::FilePath(FILE_PATH_LITERAL("test"));
-  auto* context = active_contents()->GetBrowserContext();
   std::unique_ptr<FakeIpfsService> ipfs_service(
-      new FakeIpfsService(context, nullptr, user_dir, chrome::GetChannel()));
+      new FakeIpfsService(nullptr, nullptr, nullptr, nullptr, nullptr, user_dir,
+                          chrome::GetChannel()));
   ipfs::ImportedData data;
   data.hash = "QmYbK4SLaSvTKKAKvNZMwyzYPy4P3GqBPN6CZzbS73FxxU";
   data.filename = "google.com";

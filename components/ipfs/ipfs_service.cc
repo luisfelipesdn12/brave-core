@@ -28,11 +28,11 @@
 #include "brave/components/ipfs/keys/ipns_keys_manager.h"
 #include "brave/components/ipfs/pref_names.h"
 #include "brave/components/ipfs/service_sandbox_type.h"
+#include "brave/components/ipfs/blob_context_getter_factory.h"
 #include "components/grit/brave_components_strings.h"
 #include "components/prefs/pref_registry_simple.h"
 #include "components/prefs/pref_service.h"
 #include "components/user_prefs/user_prefs.h"
-#include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/service_process_host.h"
 #include "content/public/browser/storage_partition.h"
@@ -90,11 +90,16 @@ std::pair<bool, std::string> LoadConfigFileOnFileTaskRunner(
 
 namespace ipfs {
 
-IpfsService::IpfsService(content::BrowserContext* context,
-                         ipfs::BraveIpfsClientUpdater* ipfs_client_updater,
-                         const base::FilePath& user_data_dir,
-                         version_info::Channel channel)
-    : context_(context),
+IpfsService::IpfsService(
+    extensions::ExtensionRegistry* registry, PrefService* prefs,
+    scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory,
+    BlobContextGetterFactoryPtr blob_context_getter_factory,
+    ipfs::BraveIpfsClientUpdater* ipfs_client_updater,
+    const base::FilePath& user_data_dir,
+    version_info::Channel channel)
+    : prefs_(prefs),
+      url_loader_factory_(url_loader_factory),
+      blob_context_getter_factory_(std::move(blob_context_getter_factory)),
       server_endpoint_(GetAPIServer(channel)),
       user_data_dir_(user_data_dir),
       ipfs_client_updater_(ipfs_client_updater),
@@ -102,19 +107,9 @@ IpfsService::IpfsService(content::BrowserContext* context,
       file_task_runner_(base::ThreadPool::CreateSequencedTaskRunner(
           {base::MayBlock(), base::TaskPriority::BEST_EFFORT,
            base::TaskShutdownBehavior::BLOCK_SHUTDOWN})),
-      ipfs_p3a(this,
-#if BUILDFLAG(ENABLE_EXTENSIONS)
-               extensions::ExtensionRegistry::Get(context)
-#else
-               nullptr
-#endif
-                   ,
-               user_prefs::UserPrefs::Get(context)),
+      ipfs_p3a(this, registry, prefs),
       weak_factory_(this) {
   DCHECK(!user_data_dir.empty());
-  url_loader_factory_ =
-      content::BrowserContext::GetDefaultStoragePartition(context)
-          ->GetURLLoaderFactoryForBrowserProcess();
 
   // Return early since g_brave_browser_process and ipfs_client_updater are not
   // available in unit tests.
@@ -122,8 +117,10 @@ IpfsService::IpfsService(content::BrowserContext* context,
     ipfs_client_updater_->AddObserver(this);
     OnExecutableReady(ipfs_client_updater_->GetExecutablePath());
   }
-  ipns_keys_manager_ =
-      std::make_unique<IpnsKeysManager>(context_, server_endpoint_);
+  ipns_keys_manager_ = std::make_unique<IpnsKeysManager>(
+      blob_context_getter_factory.get(),
+      url_loader_factory.get(),
+      server_endpoint_);
   AddObserver(ipns_keys_manager_.get());
 }
 
@@ -151,8 +148,7 @@ void IpfsService::RegisterProfilePrefs(PrefRegistrySimple* registry) {
 }
 
 base::FilePath IpfsService::GetIpfsExecutablePath() const {
-  PrefService* prefs = user_prefs::UserPrefs::Get(context_);
-  return prefs->GetFilePath(kIPFSBinaryPath);
+  return prefs_->GetFilePath(kIPFSBinaryPath);
 }
 
 void IpfsService::OnInstallationEvent(ComponentUpdaterEvents event) {
@@ -165,8 +161,7 @@ void IpfsService::OnExecutableReady(const base::FilePath& path) {
   if (path.empty())
     return;
 
-  PrefService* prefs = user_prefs::UserPrefs::Get(context_);
-  prefs->SetFilePath(kIPFSBinaryPath, path);
+  prefs_->SetFilePath(kIPFSBinaryPath, path);
 
   if (ipfs_client_updater_) {
     ipfs_client_updater_->RemoveObserver(this);
@@ -175,8 +170,7 @@ void IpfsService::OnExecutableReady(const base::FilePath& path) {
 }
 
 std::string IpfsService::GetStorageSize() {
-  PrefService* prefs = user_prefs::UserPrefs::Get(context_);
-  return std::to_string(prefs->GetInteger(kIpfsStorageMax)) + "GB";
+  return std::to_string(prefs_->GetInteger(kIpfsStorageMax)) + "GB";
 }
 
 void IpfsService::LaunchIfNotRunning(const base::FilePath& executable_path) {
@@ -308,7 +302,8 @@ void IpfsService::ImportFileToIpfs(const base::FilePath& path,
       base::BindOnce(&IpfsService::OnImportFinished, weak_factory_.GetWeakPtr(),
                      std::move(callback), hash);
   importers_[hash] = std::make_unique<IpfsImportWorkerBase>(
-      context_, server_endpoint_, std::move(import_completed_callback), key);
+      blob_context_getter_factory_.get(), url_loader_factory_.get(),
+      server_endpoint_, std::move(import_completed_callback), key);
   importers_[hash]->ImportFile(path);
 }
 
@@ -335,7 +330,8 @@ void IpfsService::ImportLinkToIpfs(const GURL& url,
       base::BindOnce(&IpfsService::OnImportFinished, weak_factory_.GetWeakPtr(),
                      std::move(callback), hash);
   importers_[hash] = std::make_unique<IpfsLinkImportWorker>(
-      context_, server_endpoint_, std::move(import_completed_callback), url);
+      blob_context_getter_factory_.get(), url_loader_factory_.get(),
+        server_endpoint_, std::move(import_completed_callback), url);
 }
 
 void IpfsService::ImportDirectoryToIpfs(const base::FilePath& folder,
@@ -361,7 +357,11 @@ void IpfsService::ImportDirectoryToIpfs(const base::FilePath& folder,
       base::BindOnce(&IpfsService::OnImportFinished, weak_factory_.GetWeakPtr(),
                      std::move(callback), hash);
   importers_[hash] = std::make_unique<IpfsImportWorkerBase>(
-      context_, server_endpoint_, std::move(import_completed_callback), key);
+      blob_context_getter_factory_.get(),
+      url_loader_factory_.get(),
+      server_endpoint_,
+      std::move(import_completed_callback),
+      key);
   importers_[hash]->ImportFolder(folder);
 }
 
@@ -387,7 +387,8 @@ void IpfsService::ImportTextToIpfs(const std::string& text,
       base::BindOnce(&IpfsService::OnImportFinished, weak_factory_.GetWeakPtr(),
                      std::move(callback), hash);
   importers_[hash] = std::make_unique<IpfsImportWorkerBase>(
-      context_, server_endpoint_, std::move(import_completed_callback));
+      blob_context_getter_factory_.get(), url_loader_factory_.get(),
+      server_endpoint_, std::move(import_completed_callback));
 
   importers_[hash]->ImportText(text, host);
 }
@@ -640,9 +641,8 @@ bool IpfsService::WasConnectedPeersCalledForTest() const {
 }
 
 IPFSResolveMethodTypes IpfsService::GetIPFSResolveMethodType() const {
-  PrefService* prefs = user_prefs::UserPrefs::Get(context_);
   return static_cast<IPFSResolveMethodTypes>(
-      prefs->GetInteger(kIPFSResolveMethod));
+      prefs_->GetInteger(kIPFSResolveMethod));
 }
 
 void IpfsService::GetRepoStats(GetRepoStatsCallback callback) {

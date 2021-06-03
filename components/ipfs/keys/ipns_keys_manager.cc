@@ -11,10 +11,10 @@
 
 #include "base/task/post_task.h"
 #include "base/task/thread_pool.h"
+#include "brave/components/ipfs/blob_context_getter_factory.h"
 #include "brave/components/ipfs/ipfs_constants.h"
 #include "brave/components/ipfs/ipfs_json_parser.h"
 #include "brave/components/ipfs/ipfs_network_utils.h"
-#include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/storage_partition.h"
 #include "net/base/mime_util.h"
@@ -28,30 +28,26 @@
 
 namespace ipfs {
 
-IpnsKeysManager::IpnsKeysManager(content::BrowserContext* context,
-                                 const GURL& server_endpoint)
-    : context_(context), server_endpoint_(server_endpoint) {
-  DCHECK(context_);
-  url_loader_factory_ =
-      content::BrowserContext::GetDefaultStoragePartition(context)
-          ->GetURLLoaderFactoryForBrowserProcess();
-}
+IpnsKeysManager::IpnsKeysManager(
+    BlobContextGetterFactory* context_factory,
+    network::mojom::URLLoaderFactory* url_loader_factory,
+    const GURL& server_endpoint)
+    : blob_context_getter_factory_(context_factory),
+      url_loader_factory_(url_loader_factory),
+      server_endpoint_(server_endpoint) {}
 
 IpnsKeysManager::~IpnsKeysManager() {}
 
 void IpnsKeysManager::ImportKey(const base::FilePath& upload_file_path,
                                 const std::string& name,
                                 ImportKeyCallback callback) {
-  auto blob_storage_context_getter =
-      content::BrowserContext::GetBlobStorageContext(context_);
-
   auto upload_callback =
       base::BindOnce(&IpnsKeysManager::UploadData, weak_factory_.GetWeakPtr(),
                      std::move(callback), name);
   auto filename = upload_file_path.BaseName().MaybeAsASCII();
   auto file_request_callback =
       base::BindOnce(&CreateRequestForFile, upload_file_path,
-                     std::move(blob_storage_context_getter),
+                     blob_context_getter_factory_,
                      ipfs::kFileMimeType, filename, std::move(upload_callback));
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
@@ -80,7 +76,7 @@ void IpnsKeysManager::RemoveKey(const std::string& name,
 
   auto iter = url_loaders_.insert(url_loaders_.begin(), std::move(url_loader));
   iter->get()->DownloadToStringOfUnboundedSizeUntilCrashAndDie(
-      url_loader_factory_.get(),
+      url_loader_factory_,
       base::BindOnce(&IpnsKeysManager::OnKeyRemoved, weak_factory_.GetWeakPtr(),
                      iter, name, std::move(callback)));
 }
@@ -128,7 +124,7 @@ void IpnsKeysManager::GenerateNewKey(const std::string& name,
 
   auto iter = url_loaders_.insert(url_loaders_.begin(), std::move(url_loader));
   iter->get()->DownloadToStringOfUnboundedSizeUntilCrashAndDie(
-      url_loader_factory_.get(),
+      url_loader_factory_,
       base::BindOnce(&IpnsKeysManager::OnKeyCreated, weak_factory_.GetWeakPtr(),
                      iter, std::move(callback)));
 }
@@ -172,7 +168,7 @@ void IpnsKeysManager::LoadKeys(LoadKeysCallback callback) {
   auto iter = url_loaders_.insert(url_loaders_.begin(), std::move(url_loader));
 
   iter->get()->DownloadToStringOfUnboundedSizeUntilCrashAndDie(
-      url_loader_factory_.get(),
+      url_loader_factory_,
       base::BindOnce(&IpnsKeysManager::OnKeysLoaded, weak_factory_.GetWeakPtr(),
                      iter));
 }
@@ -191,7 +187,7 @@ void IpnsKeysManager::UploadData(
   auto url_loader = CreateURLLoader(url, "POST", std::move(request));
   auto iter = url_loaders_.insert(url_loaders_.begin(), std::move(url_loader));
   iter->get()->DownloadToStringOfUnboundedSizeUntilCrashAndDie(
-      url_loader_factory_.get(),
+      url_loader_factory_,
       base::BindOnce(&IpnsKeysManager::OnKeyImported,
                      weak_factory_.GetWeakPtr(), iter, std::move(callback),
                      name));

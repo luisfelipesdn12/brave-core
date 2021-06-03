@@ -5,8 +5,11 @@
 
 #include "brave/browser/ipfs/ipfs_service_factory.h"
 
+#include <memory>
+
 #include "base/path_service.h"
 #include "brave/browser/brave_browser_process.h"
+#include "brave/browser/ipfs/ipfs_blob_context_getter_factory.h"
 #include "brave/browser/profiles/profile_util.h"
 #include "brave/components/ipfs/ipfs_service.h"
 #include "brave/components/ipfs/ipfs_utils.h"
@@ -15,9 +18,11 @@
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "components/user_prefs/user_prefs.h"
 #include "extensions/buildflags/buildflags.h"
+#include "content/public/browser/storage_partition.h"
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
 #include "extensions/browser/extension_registry_factory.h"
+#include "extensions/browser/extension_registry.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/browser/extension_system_provider.h"
 #include "extensions/browser/extensions_browser_client.h"
@@ -57,11 +62,17 @@ KeyedService* IpfsServiceFactory::BuildServiceInstanceFor(
     content::BrowserContext* context) const {
   base::FilePath user_data_dir;
   base::PathService::Get(chrome::DIR_USER_DATA, &user_data_dir);
-  return new IpfsService(context,
-                         g_brave_browser_process
-                             ? g_brave_browser_process->ipfs_client_updater()
-                             : nullptr,
-                         user_data_dir, chrome::GetChannel());
+  auto url_loader = content::BrowserContext::GetDefaultStoragePartition(context)
+      ->GetURLLoaderFactoryForBrowserProcess();
+  auto context_getter = std::make_unique<IpfsBlobContextGetterFactory>(context);
+  auto* ipfs_updater =
+      g_brave_browser_process ? g_brave_browser_process->ipfs_client_updater()
+                              : nullptr;
+
+  return new IpfsService(extensions::ExtensionRegistry::Get(context),
+      user_prefs::UserPrefs::Get(context), std::move(url_loader),
+      std::move(context_getter), ipfs_updater, user_data_dir,
+      chrome::GetChannel());
 }
 
 // static
