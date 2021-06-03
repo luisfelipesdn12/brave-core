@@ -101,14 +101,13 @@ bool IsIpfsResolveMethodDisabled(PrefService* prefs) {
 }
 
 bool IsIpfsMenuEnabled(PrefService* prefs) {
-  return !ipfs::IsIpfsDisabled(prefs) &&
-         ipfs::IsLocalGatewayConfigured(prefs);
+  return !ipfs::IsIpfsDisabled(prefs) && ipfs::IsLocalGatewayConfigured(prefs);
 }
 
 bool IsIpfsDisabled(PrefService* prefs) {
   DCHECK(prefs);
   return (IsIpfsDisabledByPolicy(prefs) ||
-      !base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature));
+          !base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature));
 }
 
 bool IsIpfsDisabledByPolicy(PrefService* prefs) {
