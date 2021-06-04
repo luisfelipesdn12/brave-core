@@ -6,6 +6,7 @@
 #include "brave/browser/ipfs/ipfs_service_factory.h"
 
 #include <memory>
+#include <utility>
 
 #include "base/path_service.h"
 #include "brave/browser/brave_browser_process.h"
