@@ -94,6 +94,9 @@
     <message name="IDS_AUTOFILL_SAVE_CARD_PROMPT_CONFIRM" desc="Text to show for the Autofill upload save credit card prompt accept button when more information (e.g., CVC) was needed in order to save the card and was entered." formatter_data="android_java">
       Confirm
     </message>
+    <message name="IDS_AUTOFILL_MOBILE_SAVE_CARD_TO_CLOUD_CONFIRMATION_DIALOG_TITLE" desc="This message appears as the title of a confirmation dialog in which the user can view/edit the information that will be saved to Brave Payments, and only appears after the user has expressed interest in uploading the card.">
+      Save to Brave sync chain
+    </message>
   </if>
   <if expr="is_ios">
     <then>
@@ -509,6 +512,9 @@
       View virtual card details
     </message>
   </if>
+  <message name="IDS_AUTOFILL_VIRTUAL_CARD_SUGGESTION_OPTION_VALUE" desc="The text shown in the virtual card option in the credit card suggestion list. It is shown as the value of the suggestion.">
+    Virtual card
+  </message>
 
   <message name="IDS_AUTOFILL_SAVE_UPI_PROMPT_TITLE" desc="Title text for the prompt to save a UPI ID locally, which the user used in a page. UPI is an online payment method. A UPI ID is an email-like string.">
     Remember your UPI ID?
